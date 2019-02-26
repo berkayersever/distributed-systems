@@ -18,8 +18,11 @@ class GreetingMaker(object):
 
 
 daemon = Pyro4.Daemon()
+ns = Pyro4.locateNS()
 uri = daemon.register(GreetingMaker)
+ns.register("example.greeting", uri)
 
-print(uri)
+# print(uri)
+print("READY")
 
 daemon.requestLoop()
