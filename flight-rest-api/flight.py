@@ -1,6 +1,6 @@
-import json
+import json, sqlite3
 from flask import Flask, request
-from flask_restful import Resource, Api
+from flask_restful import Resource, reqparse, Api
 
 tickets = []
 
@@ -8,6 +8,17 @@ tickets = []
 class Flight(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('price', type=float, required=True, help="This field cannot be left blank!")
+
+    @classmethod
+    def find_by_id(cls, flight_id):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "SELECT * FROM flights WHERE flight_id=?"
+        result = cursor.execute(query, (flight_id,))
+        row = result.fetchone()
+        connection.close()
+        if row:
+            return {'flight': {'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]}}
 
     def get(self):
         print("Get Request")
