@@ -12,7 +12,7 @@ api = Api(app)
 
 # tickets = []
 
-api.add_resource(Flight, '/')
+api.add_resource(Flight, '/flight/<int:flight_id>')
 
 if __name__ == '__main__':
     app.run(port=5000, debug=True, host='0.0.0.0')

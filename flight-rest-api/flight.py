@@ -20,19 +20,25 @@ class Flight(Resource):
         if row:
             return {'flight': {'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]}}
 
-    def get(self):
-        print("Get Request")
-        data = (request.get_json())
-        if 'PNR' not in data:
-            return [{'PNR': 'a'}, {'PNR': 'b'}], 200
-        if 'seat_number' in data:
-            print("Seat number is already given.")
-            print(data['seat_number'])
-        PNR = data['PNR']
-        if PNR in tickets:
-            return request.get_json(), 200
-        else:
-            return {'message': 'Ticket not found'}, 404
+    def get(self, flight_id):
+        flight = self.find_by_id(flight_id)
+        if flight:
+            return flight, 200
+        return {'message': 'Flight not found'}, 404
+
+    # def get(self):
+    #     print("Get Request")
+    #     data = (request.get_json())
+    #     if 'PNR' not in data:
+    #         return [{'PNR': 'a'}, {'PNR': 'b'}], 200
+    #     if 'seat_number' in data:
+    #         print("Seat number is already given.")
+    #         print(data['seat_number'])
+    #     PNR = data['PNR']
+    #     if PNR in tickets:
+    #         return request.get_json(), 200
+    #     else:
+    #         return {'message': 'Ticket not found'}, 404
 
     # def put(self):
     #     data = (request.get_json())
