@@ -29,6 +29,15 @@ class Flight(Resource):
         connection.commit()
         connection.close()
 
+    @classmethod
+    def insert(cls, flight):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "INSERT INTO flights VALUES (?, ?, ?, ?)"
+        cursor.execute(query, (flight['flight_id'], flight['to_where'], flight['from_where'], flight['date']))
+        connection.commit()
+        connection.close()
+
     def get(self, flight_id):
         flight = self.find_by_id(flight_id)
         if flight:
