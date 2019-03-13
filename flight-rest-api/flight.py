@@ -20,7 +20,8 @@ class Flight(Resource):
         row = result.fetchone()
         connection.close()
         if row:
-            return {'flight': {'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]}}
+            return {'flight': {'to_where': row[1], 'from_where': row[2], 'date': row[3], 'flight_id': row[0]}}
+            # return {'flight': {'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]}}
 
     @classmethod
     def update(cls, flight):
@@ -35,10 +36,21 @@ class Flight(Resource):
     def insert(cls, flight):
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
-        query = "INSERT INTO flights VALUES (?, ?, ?, ?)"
-        cursor.execute(query, (flight['flight_id'], flight['to_where'], flight['from_where'], flight['date']))
+        query = "INSERT INTO flights (to_where, from_where, date) VALUES (?, ?, ?)"
+        cursor.execute(query, (flight['to_where'], flight['from_where'], flight['date']))
         connection.commit()
         connection.close()
+
+    def delete(self, flight_id):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        if not self.find_by_id(flight_id):
+            return {'message': "A flight with id '{}' does not exist.".format(flight_id)}, 404
+        query = "DELETE FROM flights WHERE flight_id=?"
+        cursor.execute(query, (flight_id,))
+        connection.commit()
+        connection.close()
+        return {'message': 'Flight deleted'}, 200
 
     def get(self, flight_id):
         flight = self.find_by_id(flight_id)
@@ -58,21 +70,14 @@ class Flight(Resource):
             return {"message": "An error occurred while inserting the flight."}, 500  # Internal Server Error
         return flight, 201
 
-    def put(self, flight_id):
+    def put(self):
         data = Flight.parser.parse_args()
-        flight = self.find_by_id(flight_id)
-        updated_flight = {'flight_id': flight_id, 'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
-        if flight is None:
-            try:
-                self.insert(updated_flight)
-            except RuntimeError:
-                return {"message": "An error occurred while inserting the item."}, 500  # Internal Server Error
-        else:
-            try:
-                self.update(updated_flight)
-            except RuntimeError:
-                return {"message": "An error occurred while updating the item."}, 500  # Internal Server Error
-        return updated_flight
+        flight = {'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
+        try:
+            self.insert(flight)
+        except RuntimeError:
+            return {"message": "An error occurred while inserting the item."}, 500  # Internal Server Error
+        return flight, 201
 
 
 class FlightList(Resource):

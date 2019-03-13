@@ -12,7 +12,7 @@ api = Api(app)
 
 # tickets = []
 
-api.add_resource(Flight, '/flight/<int:flight_id>')
+api.add_resource(Flight, '/flight', '/flights/<int:flight_id>')
 api.add_resource(FlightList, '/flights')
 
 if __name__ == '__main__':
