@@ -10,15 +10,24 @@ class Flight(Resource):
     parser.add_argument('price', type=float, required=True, help="This field cannot be left blank!")
 
     @classmethod
-    def find_by_id(cls, flight_id):
+    def find_by_id(cls, flight):
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
         query = "SELECT * FROM flights WHERE flight_id=?"
-        result = cursor.execute(query, (flight_id,))
+        result = cursor.execute(query, (flight,))
         row = result.fetchone()
         connection.close()
         if row:
             return {'flight': {'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]}}
+
+    @classmethod
+    def update(cls, flight):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "UPDATE flights SET to_where=?, from_where=?, date=? WHERE flight_id=?"
+        cursor.execute(query, (flight['flight_id'], flight['to_where'], flight['from_where'], flight['date']))
+        connection.commit()
+        connection.close()
 
     def get(self, flight_id):
         flight = self.find_by_id(flight_id)
