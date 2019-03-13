@@ -91,3 +91,80 @@ class FlightList(Resource):
             flights.append({'to_where': row[1], 'from_where': row[2], 'date': row[3], 'flight_id': row[0]})
         connection.close()
         return {'flights': flights}, 200
+
+class Ticket(Resource):
+    parser = reqparse.RequestParser()
+    # parser.add_argument('PNR', help="This field cannot be left blank!")
+    # parser.add_argument('seat_number', help="This field cannot be left blank!")
+    parser.add_argument('flight_id', type=int, help="This field cannot be left blank!")
+
+    @classmethod
+    def find_by_id(cls, ticket):
+        print(type(ticket))
+        print(type(ticket['flight_id']))
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "SELECT * FROM tickets WHERE flight_id=?"
+        result = cursor.execute(query, (ticket['flight_id'],))
+        print(result)
+        row = result.fetchone()
+        print(row)
+        connection.close()
+        if row:
+            return {'ticket': {'flight_id': row[0]}}
+
+    @classmethod
+    def get_count(cls, ticket):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        ## query = "SELECT * FROM tickets WHERE flight_id=?"
+        query = "SELECT count(*) FROM tickets WHERE flight_id=?"
+        result = cursor.execute(query, (ticket['flight_id'],))
+        print(result)
+        row = result.fetchone()
+        connection.close()
+        if row:
+            return row[0]
+
+
+
+
+
+
+
+    def put(self):
+        data = Ticket.parser.parse_args()
+        ticket = {'flight_id': data['flight_id']}
+        # ticket = self.find_by_id()
+        if not self.find_by_id(ticket):
+            return {"message": "Flight id DNE"}, 404  # Not Found
+        else:
+            print("Hmm")
+            self.get_count(ticket)
+
+
+        # if ticket is None:
+        #     return {"message": "Flight id DNE"}, 404  # Not Found
+        # else:
+        #     print("Hmm")
+        #
+        #
+        # if self.find_by_id(flight_id):
+        #     return {'message': "A flight with id '{}' already exists.".format(flight_id)}, 400
+        # data = Flight.parser.parse_args()
+        # flight = {'flight_id': flight_id, 'to_where': data['to_where'],
+        #           'from_where': data['from_where'], 'date': data['date']}
+        # try:
+        #     self.insert(flight)
+        # except RuntimeError:
+        #     return {"message": "An error occurred while inserting the flight."}, 500  # Internal Server Error
+        # return flight, 201
+
+
+        #
+        # ticket = {'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
+        # try:
+        #     self.insert(flight)
+        # except RuntimeError:
+        #     return {"message": "An error occurred while inserting the item."}, 500  # Internal Server Error
+        # return flight, 201
