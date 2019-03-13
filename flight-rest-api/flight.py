@@ -55,15 +55,21 @@ class Flight(Resource):
     #     tickets.append(PNR)
     #     return {'PNR':data['PNR']}, 201
 
-    def put(self, name):
+    def put(self, flight_id):
         data = Flight.parser.parse_args()
-        item = next(filter(lambda x: x['name'] == name, items), None)
-        if item is None:
-            item = {'name': name, 'price': data['price']}
-            items.append(item)
+        flight = self.find_by_id(flight_id)
+        updated_flight = {'flight_id': flight_id, 'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
+        if flight is None:
+            try:
+                self.insert(updated_flight)
+            except RuntimeError:
+                return {"message": "An error occurred while inserting the item."}, 500  # Internal Server Error
         else:
-            item.update(data)
-        return item
+            try:
+                self.update(updated_flight)
+            except RuntimeError:
+                return {"message": "An error occurred while updating the item."}, 500  # Internal Server Error
+        return updated_flight
 
 
 class FlightList(Resource):
