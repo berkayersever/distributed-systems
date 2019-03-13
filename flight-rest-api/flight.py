@@ -65,6 +65,6 @@ class FlightList(Resource):
         result = cursor.execute(query)
         flights = []
         for row in result:
-            flights.append({'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]})
+            flights.append({'to_where': row[1], 'from_where': row[2], 'date': row[3], 'flight_id': row[0]})
         connection.close()
         return {'flights': flights}
