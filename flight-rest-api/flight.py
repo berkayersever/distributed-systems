@@ -55,3 +55,16 @@ class Flight(Resource):
         else:
             item.update(data)
         return item
+
+
+class FlightList(Resource):
+    def get(self):
+        connection = sqlite3.connect('data.db')
+        cursor = connection.cursor()
+        query = "SELECT * FROM flights"
+        result = cursor.execute(query)
+        flights = []
+        for row in result:
+            flights.append({'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]})
+        connection.close()
+        return {'flights': flights}
