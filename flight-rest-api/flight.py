@@ -152,7 +152,7 @@ class FlightList(Resource):
 class Ticket(Resource):
     parser = reqparse.RequestParser()
     parser.add_argument('PNR')
-    # parser.add_argument('seat_number', help="This field cannot be left blank!")
+    parser.add_argument('seat_number', type=int)
     parser.add_argument('flight_id', type=int, help="This field cannot be left blank!")
     print(parser)
 
@@ -204,7 +204,8 @@ class Ticket(Resource):
         # print(str(ticket['flight_id'])[5:7])
         if row:
             # print(str(ticket['flight_id'])[5:7])
-            return {'ticket': {'PNR': generate_pnr(), 'seat_number': 1, 'flight_id': ticket['flight_id']}}
+            # return {'ticket': {'PNR': generate_pnr(), 'flight_id': ticket['flight_id']}}
+            return {'ticket': {'PNR': generate_pnr(), 'seat_number': ticket['seat_number'], 'flight_id': ticket['flight_id']}} # Seat Number is not needed probably
             # return {'ticket': {'PNR': generate_pnr(), 'seat_number': 1, 'flight_id': row[0]}}
 
     @classmethod
@@ -222,10 +223,13 @@ class Ticket(Resource):
         # query = "SELECT * FROM {} WHERE flight_id=?".format(_id)
         # result = cursor.execute(query, (ticket['flight_id'],))
         row = result.fetchone()
-        print(row)
+        # print(row)
         connection.close()
         if row:
-            return {'ticket': {'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5], 'seat_number': 1}}
+            # print(row)
+            # return {'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5]}
+            return {'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5], 'seat_number': row[1]} # Seat number is not needed probably
+            # return {'ticket': {'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5], 'seat_number': 1}} # Alternative Format
 
 
     # @classmethod
@@ -302,9 +306,51 @@ class Ticket(Resource):
     #         return ticket, 200
     #     return {'message': 'Flight not found'}, 404
 
-    def post(self, flight_id):
-        if self.find_by_id(flight_id):
-            return {'message': "A flight with id '{}' already exists.".format(flight_id)}, 400
+    def post(self):
+        data = Ticket.parser.parse_args()
+        print("DATA: ")
+        print(data)
+        # pnr = data['PNR']
+        ticket = {'PNR': data['PNR']}
+        print(ticket)
+        # print('ticket: ' + str(ticket))
+        # print(pnr)
+        # print(data)
+        # ticket = {'PNR': data['PNR']}
+        # print(ticket)
+        # pnr = ticket['PNR']
+        # print(pnr)
+        # 'ticket': {'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5], 'seat_number': 1}}
+        temp = self.find_by_pnr(ticket['PNR'])
+        print(temp)
+        # if self.find_by_pnr(ticket['PNR']):
+        if temp:
+            connection = sqlite3.connect('data.db')
+            cursor = connection.cursor()
+            query = "SELECT count(*) FROM tickets WHERE seat_number=? AND flight_id=?"
+            result = cursor.execute(query, (data['seat_number'], temp['flight_id'],))
+            print(temp['seat_number'])
+            print(ticket['PNR'])
+            row = result.fetchone()
+            connection.close()
+            if row[0] == 0:
+                return {'PNR': ticket['PNR'], 'seat_number': data['seat_number']}, 200
+
+            # row = result.fetchone
+
+            # result = cursor.execute(query, (flight['to_where'], flight['from_where'], flight['date']))
+            # result = cursor.execute(query, (pnr,))
+
+
+        if not self.find_by_pnr(ticket['PNR']):
+            # return {"message": "PNR {} does not exist"}.format('s'), 404     # Not Found
+            return {'message': "PNR: {} does not exist".format(ticket['PNR'])}, 404    # Not Found
+
+
+        # if not self.find_by_pnr(ticket['PNR']):
+        #     print(ticket['PNR'])
+        #     return {'message': "A flight with id '{}' already exists.".format(flight_id)}, 400
+
         data = Flight.parser.parse_args()
         flight = {'flight_id': flight_id, 'to_where': data['to_where'],
                   'from_where': data['from_where'], 'date': data['date']}
