@@ -2,6 +2,7 @@ import random, hashlib, time
 import json, sqlite3
 from flask import Flask, request
 from flask_restful import Resource, reqparse, Api
+from flask_jwt import jwt_required
 
 tickets = []
 secret_key = 'ZVmHVMt7mtqRg5E#vCjuFB29@P_QHaF6r5VmQH-dEhzHJ8YWmh'
@@ -127,6 +128,7 @@ class FlightList(Resource):
         connection.close()
         return {'flights': flights}, 200
 
+    @jwt_required()
     def put(self):
         data = Flight.parser.parse_args()
         flight = {'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
