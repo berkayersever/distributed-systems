@@ -33,7 +33,6 @@ class Flight(Resource):
         connection.close()
         if row:
             return {'flight': {'to_where': row[1], 'from_where': row[2], 'date': row[3], 'flight_id': row[0]}}
-            # return {'flight': {'flight_id': row[0], 'to_where': row[1], 'from_where': row[2], 'date': row[3]}}
 
     @classmethod
     def update(cls, flight):
@@ -71,17 +70,6 @@ class Flight(Resource):
         connection.commit()
         connection.close()
         return {'message': 'Flight deleted'}, 200
-
-    # def get(self):
-    #     connection = sqlite3.connect('data.db')
-    #     cursor = connection.cursor()
-    #     query = "SELECT * FROM flights"
-    #     result = cursor.execute(query)
-    #     flights = []
-    #     for row in result:
-    #         flights.append({'to_where': row[1], 'from_where': row[2], 'date': row[3], 'flight_id': row[0]})
-    #     connection.close()
-    #     return {'flights': flights}, 200
 
     def get(self, flight_id):
         flight = self.find_by_id(flight_id)
@@ -169,49 +157,25 @@ class Ticket(Resource):
         query = "INSERT INTO {} (PNR, flight_id) VALUES (?, ?)".format(_id)
         pnr = generate_pnr()
         cursor.execute(query, (pnr, ticket['flight_id'],))
-
         query = "SELECT * FROM flights WHERE flight_id=?"
         result = cursor.execute(query, (ticket['flight_id'],))
         row = result.fetchone()
-        # print(row)
-        # if row:
-        #     data = {'flight': {'PNR': pnr, 'to_where': row[1], 'from_where': row[2], 'date': row[3], 'flight_id': row[0]}}
-
-
-        # data = Flight.parser.parse_args()
-        # flight = {'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
-
         cursor.execute("INSERT INTO tickets (PNR, flight_id, to_where, from_where, date) VALUES (?, ?, ?, ?, ?)", (pnr, ticket['flight_id'], row[1], row[2], row[3],))
-
-        # cursor.execute("INSERT INTO tickets (PNR, flight_id) VALUES (?, ?)", (pnr, ticket['flight_id'],))
         connection.commit()
         connection.close()
-        # return {'flight': {'to_where': row[1], 'from_where': row[2], 'date': row[3], 'flight_id': row[0]}}
         return {'PNR': pnr}
 
     @classmethod
     def find_by_id(cls, ticket):
-        # print(type(ticket))
-        # print(type(ticket['flight_id']))
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()
         _id = 'TK' + str(1900 + ticket['flight_id'])  # flight_id to be used in new table
-        # print(_id)
-        # query = "SELECT * FROM {} WHERE flight_id=?".format(_id)
         query = "SELECT * FROM flights WHERE flight_id=?"
-        # result = cursor.execute(query, (flight['to_where'], flight['from_where'], flight['date']))
         result = cursor.execute(query, (ticket['flight_id'],))
         row = result.fetchone()
-        # print(row)
         connection.close()
-        string = ticket['flight_id']
-        # print("String: " + str(string))
-        # print(str(ticket['flight_id'])[5:7])
         if row:
-            # print(str(ticket['flight_id'])[5:7])
-            # return {'ticket': {'PNR': generate_pnr(), 'flight_id': ticket['flight_id']}}
             return {'ticket': {'PNR': generate_pnr(), 'seat_number': ticket['seat_number'], 'flight_id': ticket['flight_id']}} # Seat Number is not needed probably
-            # return {'ticket': {'PNR': generate_pnr(), 'seat_number': 1, 'flight_id': row[0]}}
 
     @classmethod
     def find_by_pnr(cls, pnr):
@@ -224,19 +188,6 @@ class Ticket(Resource):
         if row:
             return {'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5], 'seat_number': row[1]} # Seat number is not needed probably
             # return {'ticket': {'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5], 'seat_number': 1}} # Alternative Format
-
-
-    # @classmethod
-    # def find_by_pnr(cls, ticket):
-    #     connection = sqlite3.connect('data.db')
-    #     cursor = connection.cursor()
-    #     _id = 'TK' + str(1900 + ticket['flight_id'])  # flight_id to be used in new table
-    #     query = "SELECT * FROM {} WHERE flight_id=?".format(_id)
-    #     result = cursor.execute(query, (ticket['flight_id'],))
-    #     row = result.fetchone()
-    #     connection.close()
-    #     if row:
-    #         return {'ticket': {'PNR': generate_pnr(), 'seat_number': 1, 'flight_id': row[0]}}
 
     @classmethod
     def get_count(cls, ticket):
@@ -272,6 +223,7 @@ class Ticket(Resource):
         except Exception as e:
             return self.get_tickets()
 
+    @jwt_required()
     def get_tickets(self):
         connection = sqlite3.connect('data.db')
         cursor = connection.cursor()

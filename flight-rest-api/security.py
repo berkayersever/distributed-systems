@@ -10,7 +10,7 @@ def encrypt_string(hash_string):
 
 def authenticate(username, password):
     user = User.find_by_username(username)
-    if user and safe_str_cmp(user.password, encrypt_string(password)):
+    if user and safe_str_cmp(user.password, password):
         return user
 
 
