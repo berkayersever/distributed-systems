@@ -2,7 +2,8 @@ import random, hashlib, time
 import json, sqlite3
 from flask import Flask, request
 from flask_restful import Resource, reqparse, Api
-from flask_jwt import jwt_required
+from flask_jwt import jwt_required, current_identity
+import flask_jwt
 
 tickets = []
 secret_key = 'ZVmHVMt7mtqRg5E#vCjuFB29@P_QHaF6r5VmQH-dEhzHJ8YWmh'
@@ -118,13 +119,17 @@ class FlightList(Resource):
 
     @jwt_required()
     def put(self):
-        data = Flight.parser.parse_args()
-        flight = {'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
-        try:
-            _id = self.insert(flight)
-        except RuntimeError:
-            return {"message": "An error occurred while inserting the item."}, 500  # Internal Server Error
-        return {'flight_id': _id}, 201
+        user = current_identity
+        if user.username == 'admin':
+            data = Flight.parser.parse_args()
+            flight = {'to_where': data['to_where'], 'from_where': data['from_where'], 'date': data['date']}
+            try:
+                _id = self.insert(flight)
+            except RuntimeError:
+                return {"message": "An error occurred while inserting the item."}, 500  # Internal Server Error
+            return {'flight_id': _id}, 201
+        else:
+            return {'message': 'Authorization Required'}, 401
 
     @classmethod
     def insert(cls, flight):
@@ -225,15 +230,19 @@ class Ticket(Resource):
 
     @jwt_required()
     def get_tickets(self):
-        connection = sqlite3.connect('data.db')
-        cursor = connection.cursor()
-        query = "SELECT * FROM tickets"
-        result = cursor.execute(query)
-        flights = []
-        for row in result:
-            flights.append({'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5]})
-        connection.close()
-        return {'flights': flights}, 200
+        user = current_identity
+        if user.username == 'admin':
+            connection = sqlite3.connect('data.db')
+            cursor = connection.cursor()
+            query = "SELECT * FROM tickets"
+            result = cursor.execute(query)
+            flights = []
+            for row in result:
+                flights.append({'to_where': row[2], 'from_where': row[3], 'date': row[4], 'flight_id': row[5]})
+            connection.close()
+            return {'flights': flights}, 200
+        else:
+            return {'message': 'Authorization Required'}, 401
 
     def post(self):
         data = Ticket.parser.parse_args()
