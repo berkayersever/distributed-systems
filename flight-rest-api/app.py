@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from flask_restful import reqparse, abort, Api, Resource
 from flask_jwt import JWT
 
+from create_tables import create_tables
 from flight import Flight, FlightList, Ticket
 from security import authenticate, identity
 
@@ -20,4 +21,5 @@ api.add_resource(FlightList, '/flights')
 api.add_resource(Ticket, '/ticket')
 
 if __name__ == '__main__':
+    create_tables()
     app.run(port=5000, debug=True, host='0.0.0.0')
