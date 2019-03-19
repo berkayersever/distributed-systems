@@ -1,7 +1,5 @@
 # REST API Implementation in Python
 
-**Group Members:**	Berkay Ersever 19626, Fatih Taşyaran 19321
-
 ### Installing
 Create Virtual Environment with Python 3.6.6
 ```
