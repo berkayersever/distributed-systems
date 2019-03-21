@@ -53,3 +53,6 @@ data = res.read()
 
 print(data.decode("utf-8"))
 ```
+### TODO
+Improve the database structure
+
