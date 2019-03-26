@@ -61,3 +61,4 @@ class FindNegativeCount(MapReduce):
 
     def reduce(self, data_arr):
         return sum(filter(None, data_arr))
+
