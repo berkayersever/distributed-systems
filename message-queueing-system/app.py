@@ -28,3 +28,36 @@ class MapReduce(ABC):
 
     def start(self, data_arr):      # data_arr: Integer Array
         pass
+
+
+class FindMax(MapReduce):
+    def __init__(self, NumWorker):
+        MapReduce.__init__(self, NumWorker)
+
+    def map(self, data_arr):
+        return None if None in data_arr else max(filter(None, data_arr))
+
+    def reduce(self, data_arr):
+        return max(filter(None, data_arr))
+
+
+class FindSum(MapReduce):
+    def __init__(self, NumWorker):
+        MapReduce.__init__(self, NumWorker)
+
+    def map(self, data_arr):
+        return None if None in data_arr else sum(data_arr)
+
+    def reduce(self, data_arr):
+        return sum(filter(None, data_arr))
+
+
+class FindNegativeCount(MapReduce):
+    def __init__(self, NumWorker):
+        MapReduce.__init__(self, NumWorker)
+
+    def map(self, data_arr):
+        return len(list(filter(lambda x: x < 0, data_arr)))
+
+    def reduce(self, data_arr):
+        return sum(filter(None, data_arr))
