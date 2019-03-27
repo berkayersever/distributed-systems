@@ -17,11 +17,11 @@ class MapReduce(ABC):
         super().__init__()
 
     @abstractmethod
-    def map(self, data_arr):        # data_arr: Integer Array
+    def map(self, data_arr):                                # data_arr: Integer Array
         self.data_arr_map = data_arr
 
     @abstractmethod
-    def reduce(self, data_arr):     # data_arr: Integer Array
+    def reduce(self, data_arr):                             # data_arr: Integer Array
         self.data_arr_reduce = data_arr
 
     def __producer(self, data_arr):
