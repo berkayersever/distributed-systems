@@ -42,9 +42,9 @@ class MapReduce(ABC):
 
     def __consumer(self):
         context = zmq.Context()
-        consumer_receiver = context.socket(zmq.PULL)  # Receive Work
+        consumer_receiver = context.socket(zmq.PULL)        # Receive Work
         consumer_receiver.connect("tcp://127.0.0.1:5557")
-        consumer_sender = context.socket(zmq.PUSH)  # Send Work
+        consumer_sender = context.socket(zmq.PUSH)          # Send Work
         consumer_sender.connect("tcp://127.0.0.1:5558")
         while True:
             work = consumer_receiver.recv_json()
