@@ -63,7 +63,7 @@ class MapReduce(ABC):
             collector_data.append(result['consumer_result'])
         print("{} Result: {}".format(str(self.__class__.__name__), self.reduce(collector_data)))
 
-    def start(self, data_arr):  # data_arr: Integer Array
+    def start(self, data_arr):                              # data_arr: Integer Array
         self.process_result_collector = Process(target=self.__result_collector, )
         for i in range(self.num_worker):
             process_consumer = Process(target=self.__consumer, )
