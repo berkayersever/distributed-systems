@@ -69,3 +69,14 @@ def register(email):
         'msg': 'Your email will be registered in a short time.',
         'task': t.task_id
     })
+
+
+@app.route("/login/<email>")
+def login(email):
+    with open('database.json', 'r') as db:
+        items = json.loads(db.read())
+        emails = [item['email'] for item in items]
+    if email in emails:
+        return jsonify({'msg': 'Success'})
+    else:
+        return jsonify({'msg': 'Access denied'})

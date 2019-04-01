@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
+    <list id="f194e42c-abc9-4037-b64d-9123380523df" name="Revert: Implemented the subclasses FindMax,FindSum and FindNegativeCount." comment="" />
     <list default="true" id="f4c78f0c-ca58-453a-97c7-95cdb1e9c73a" name="Default" comment="Implemented the subclasses FindMax,FindSum and FindNegativeCount.">
       <change afterPath="$PROJECT_DIR$/../lab-3/.idea/lab-3.iml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../lab-3/.idea/markdown-exported-files.xml" afterDir="false" />
@@ -18,14 +19,11 @@
       <change afterPath="$PROJECT_DIR$/../lab-4/.idea/modules.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/../lab-4/.idea/workspace.xml" afterDir="false" />
       <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/map_reduce.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/new.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../celery-app/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/../celery-app/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/message-queueing-system.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/message-queueing-system.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
-    <list id="f194e42c-abc9-4037-b64d-9123380523df" name="Revert: Implemented the subclasses FindMax,FindSum and FindNegativeCount." comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
