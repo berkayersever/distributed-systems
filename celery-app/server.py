@@ -80,3 +80,9 @@ def login(email):
         return jsonify({'msg': 'Success'})
     else:
         return jsonify({'msg': 'Access denied'})
+
+
+if __name__ == '__main__':
+    with open('database.json', 'w') as d:
+        d.write(json.dumps([{'email': 'test@test.com'}]))
+    app.run(debug=True)
