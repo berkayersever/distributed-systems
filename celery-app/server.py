@@ -1,6 +1,6 @@
 import json
 import time
-from flask import Flask
+from flask import Flask, jsonify
 from celery import Celery
 
 app = Flask(__name__)
@@ -47,3 +47,16 @@ def registration(email):
         return True
 
     return False
+
+
+@app.route("/check/<t_id>")
+def check(t_id):
+    res = celery.AsyncResult(t_id)
+    if res.ready():
+        return jsonify({
+            'msg': "Task has been completed!"
+        })
+    else:
+        return jsonify({
+            'msg': "Work in progress..."
+        })
