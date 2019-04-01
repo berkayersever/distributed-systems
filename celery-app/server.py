@@ -60,3 +60,12 @@ def check(t_id):
         return jsonify({
             'msg': "Work in progress..."
         })
+
+
+@app.route("/register/<email>")
+def register(email):
+    t = registration.delay(email)
+    return jsonify({
+        'msg': 'Your email will be registered in a short time.',
+        'task': t.task_id
+    })
