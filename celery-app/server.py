@@ -52,14 +52,8 @@ def registration(email):
 @app.route("/check/<t_id>")
 def check(t_id):
     res = celery.AsyncResult(t_id)
-    if res.ready():
-        return jsonify({
-            'msg': "Task has been completed!"
-        })
-    else:
-        return jsonify({
-            'msg': "Work in progress..."
-        })
+    msg = jsonify(msg='Task has been completed!') if res.ready() else jsonify('Work in progress.')
+    return msg
 
 
 @app.route("/register/<email>")
